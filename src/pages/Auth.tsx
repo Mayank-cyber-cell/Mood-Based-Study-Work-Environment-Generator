@@ -69,8 +69,42 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 bg-gradient-to-br from-background via-background to-primary/5">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
+      <motion.div
+        className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20"
+        style={{
+          background: 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)',
+          filter: 'blur(60px)'
+        }}
+        animate={{
+          scale: [1, 1.2, 1],
+          x: [0, 30, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div
+        className="absolute bottom-20 right-20 w-64 h-64 rounded-full opacity-20"
+        style={{
+          background: 'radial-gradient(circle, hsl(var(--accent) / 0.3), transparent 70%)',
+          filter: 'blur(60px)'
+        }}
+        animate={{
+          scale: [1.2, 1, 1.2],
+          x: [0, -20, 0],
+          y: [0, 30, 0],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <div className="w-full max-w-md relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

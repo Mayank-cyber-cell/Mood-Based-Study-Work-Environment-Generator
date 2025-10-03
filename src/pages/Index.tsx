@@ -196,40 +196,65 @@ const Index = () => {
       {/* Background decorative elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-10"
+          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full"
           style={{
-            background: selectedMoodData 
-              ? `radial-gradient(circle, ${selectedMoodData.color}40, transparent 70%)`
-              : 'radial-gradient(circle, hsl(var(--primary))40, transparent 70%)'
+            background: selectedMoodData
+              ? `radial-gradient(circle, ${selectedMoodData.color}15, transparent 70%)`
+              : 'radial-gradient(circle, hsl(var(--primary) / 0.1), transparent 70%)',
+            filter: 'blur(40px)'
           }}
           animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
+            scale: [1, 1.3, 1],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
           }}
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
         />
-        
+
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-10"
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full"
           style={{
-            background: selectedMoodData 
-              ? `radial-gradient(circle, ${selectedMoodData.color}30, transparent 70%)`
-              : 'radial-gradient(circle, hsl(var(--accent))30, transparent 70%)'
+            background: selectedMoodData
+              ? `radial-gradient(circle, ${selectedMoodData.color}12, transparent 70%)`
+              : 'radial-gradient(circle, hsl(var(--accent) / 0.08), transparent 70%)',
+            filter: 'blur(40px)'
           }}
           animate={{
             scale: [1.2, 1, 1.2],
-            rotate: [90, 0, 90],
+            x: [0, -40, 0],
+            y: [0, 40, 0],
           }}
           transition={{
             duration: 15,
             repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        <motion.div
+          className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full"
+          style={{
+            background: selectedMoodData
+              ? `radial-gradient(circle, ${selectedMoodData.color}10, transparent 70%)`
+              : 'radial-gradient(circle, hsl(var(--secondary) / 0.06), transparent 70%)',
+            filter: 'blur(50px)'
+          }}
+          animate={{
+            scale: [1, 1.4, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
             ease: "linear"
           }}
         />
+
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
       </div>
     </div>
   );
