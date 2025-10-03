@@ -1,4 +1,4 @@
-xzx
+xz
 # 🌟 Mood-Based Study/Work Environment 
 
 An innovative web application that tailors your study or work environment based on your current mood. Whether you're feeling stressed, tired, excited, or calm, this app adjusts the ambiance to enhance your productivity and focus.
