@@ -30,7 +30,6 @@ const Index = () => {
     setIsTransitioning(false);
   };
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
@@ -40,15 +39,12 @@ const Index = () => {
       switch (e.code) {
         case 'Space':
           e.preventDefault();
-          // Handle play/pause in music player
           break;
         case 'KeyP':
           e.preventDefault();
-          // Handle Pomodoro timer toggle
           break;
         case 'KeyM':
           e.preventDefault();
-          // Handle mute/unmute
           break;
         case 'Digit1':
           handleMoodSelect('calm');
@@ -67,7 +63,7 @@ const Index = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [handleMoodSelect]);
 
   // Initialize with calm mood
   useEffect(() => {
