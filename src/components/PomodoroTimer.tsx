@@ -1,10 +1,21 @@
-import { motion } from 'framer-motion';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause, RotateCcw, Coffee, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTimer } from '@/hooks/useTimer';
+import { useEffect } from 'react';
 
-export const PomodoroTimer = () => {
+interface PomodoroTimerProps {
+  onTimerUsed?: (used: boolean) => void;
+}
+
+export const PomodoroTimer = ({ onTimerUsed }: PomodoroTimerProps) => {
   const { timer, progress, toggleTimer, resetTimer } = useTimer();
+
+  useEffect(() => {
+    if (onTimerUsed) {
+      onTimerUsed(timer.isActive || timer.cycles > 0);
+    }
+  }, [timer.isActive, timer.cycles, onTimerUsed]);
 
   const circumference = 2 * Math.PI * 90; // radius = 90
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -20,9 +31,35 @@ export const PomodoroTimer = () => {
       transition={{ duration: 0.5, delay: 0.3 }}
       className="glass-card p-6 flex flex-col items-center"
     >
-      <h3 className="text-lg font-semibold mb-4 text-glow">
-        {timer.isBreak ? 'Break Time' : 'Focus Time'}
-      </h3>
+      <motion.div
+        className="flex items-center gap-2 mb-4"
+        key={timer.isBreak ? 'break' : 'focus'}
+      >
+        <AnimatePresence mode="wait">
+          {timer.isBreak ? (
+            <motion.div
+              key="coffee"
+              initial={{ rotate: -180, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 180, opacity: 0 }}
+            >
+              <Coffee className="w-5 h-5 text-amber-500" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="brain"
+              initial={{ rotate: -180, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 180, opacity: 0 }}
+            >
+              <Brain className="w-5 h-5 text-primary" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <h3 className="text-lg font-semibold text-glow">
+          {timer.isBreak ? 'Break Time' : 'Focus Time'}
+        </h3>
+      </motion.div>
 
       {/* Circular Progress */}
       <div className="relative mb-6">
@@ -66,15 +103,26 @@ export const PomodoroTimer = () => {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <motion.div
             key={`${timer.minutes}:${timer.seconds}`}
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 1.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-3xl font-bold text-glow"
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="text-4xl font-bold text-glow tabular-nums"
           >
             {formatTime(timer.minutes, timer.seconds)}
           </motion.div>
-          <div className="text-sm text-muted-foreground mt-1">
-            Cycle {timer.cycles + 1}
-          </div>
+          <motion.div
+            className="text-sm text-muted-foreground mt-2 flex items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="flex items-center gap-1">
+              {[...Array(timer.cycles)].map((_, i) => (
+                <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary" />
+              ))}
+            </div>
+            <span>Cycle {timer.cycles + 1}</span>
+          </motion.div>
         </div>
       </div>
 
@@ -84,9 +132,9 @@ export const PomodoroTimer = () => {
           onClick={toggleTimer}
           className="glass-button px-6 py-2 border-glow"
           style={{
-            background: timer.isActive 
-              ? 'linear-gradient(135deg, hsl(var(--destructive))40, hsl(var(--destructive))20)'
-              : 'linear-gradient(135deg, hsl(var(--primary))40, hsl(var(--primary))20)'
+            background: timer.isActive
+              ? 'linear-gradient(135deg, hsl(var(--destructive) / 0.4), hsl(var(--destructive) / 0.2))'
+              : 'linear-gradient(135deg, hsl(var(--primary) / 0.4), hsl(var(--primary) / 0.2))'
           }}
         >
           {timer.isActive ? (

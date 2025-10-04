@@ -7,15 +7,27 @@ An innovative web application that tailors your study or work environment based 
 
 ## 🚀 Features
 
-* **Mood Selection**: Choose from four moods — Stressed, Tired, Excited, Calm.
+### Core Features
+* **Mood Selection**: Choose from four moods — Calm, Stressed, Excited, Tired.
 * **Dynamic Environment**:
+  * **Background Music**: Mood-matching playlists with visual audio visualizer.
+  * **Color Themes**: Adaptive color schemes and animated backgrounds that align with your selected mood.
+  * **Motivational Quotes**: Inspirational quotes displayed in a beautiful interface.
+  * **Pomodoro Timer**: Built-in focus timer with cycle tracking and visual progress indicators.
+* **Responsive Design**: Optimized for both desktop and mobile devices with smooth animations.
+* **Advanced Theme Toggle**: Light/Dark mode with system preference support and animated transitions.
 
-  * **Background Music**: Integrated with Spotify API to play mood-matching tracks.
-  * **Color Themes**: Adaptive color schemes that align with your selected mood.
-  * **Motivational Quotes**: AI-generated quotes to inspire and motivate.
-  * **Pomodoro Timer**: Built-in timer to encourage focused work sessions.
-* **Responsive Design**: Optimized for both desktop and mobile devices.
-* **Light/Dark Mode**: Seamless transition between light and dark themes.
+### Analytics & Tracking
+* **Session Tracking**: Automatically tracks your mood sessions with duration and activity metrics.
+* **User Feedback System**: Rate your experience after each session with a 5-star rating and detailed feedback options.
+* **Mood Analytics**: View 7-day activity summaries showing session counts, total time, and average ratings per mood.
+* **Data Persistence**: All data is securely stored in Supabase with Row Level Security (RLS) enabled.
+
+### User Experience
+* **Smooth Transitions**: Beautiful animations and crossfade effects when switching moods.
+* **Keyboard Shortcuts**: Quick access with number keys (1-4) for moods and hotkeys for controls.
+* **Glass-morphism UI**: Modern design with frosted glass effects and subtle micro-interactions.
+* **Real-time Progress**: Live tracking of timer cycles and session duration.
 
 ---
 
@@ -29,13 +41,23 @@ An innovative web application that tailors your study or work environment based 
 
 ## 🛠️ Technologies Used
 
-* **Frontend**: React.js, Tailwind CSS
-* **Backend**: Node.js, Express.js
+* **Frontend**:
+  * React 18 with TypeScript
+  * Vite for fast development and building
+  * Tailwind CSS for styling
+  * Framer Motion for animations
+  * shadcn/ui component library
+  * Radix UI primitives
+* **Backend & Database**:
+  * Supabase for database, authentication, and real-time features
+  * PostgreSQL with Row Level Security (RLS)
+  * Automated database triggers for analytics
+* **State Management**:
+  * React Hooks for local state
+  * Custom hooks for timer, theme, quotes, and sessions
 * **APIs**:
-
-  * Spotify Web API
-  * ZenQuotes API
-* **Authentication**: OAuth 2.0 for Spotify login
+  * YouTube embed for music playlists
+  * Supabase REST API for data operations
 
 ---
 
@@ -43,8 +65,8 @@ An innovative web application that tailors your study or work environment based 
 
 ### Prerequisites
 
-* Node.js and npm installed on your machine.
-* A Spotify Developer account to obtain API credentials.
+* Node.js (v18 or higher) and npm installed on your machine.
+* A Supabase account (free tier available at https://supabase.com)
 
 ### Steps
 
@@ -66,24 +88,23 @@ An innovative web application that tailors your study or work environment based 
    npm install
    ```
 
-4. Set up environment variables:
+4. Set up Supabase:
 
-   Create a `.env` file in the root directory and add your Spotify credentials:
-
-   ```
-   SPOTIFY_CLIENT_ID=your_client_id
-   SPOTIFY_CLIENT_SECRET=your_client_secret
-   REDIRECT_URI=http://localhost:8888/callback
-   FRONTEND_URI=http://localhost:3000
-   ```
+   The database migrations are already configured. The Supabase connection is pre-configured in the `.env` file with connection details.
 
 5. Start the development server:
 
    ```bash
-   npm start
+   npm run dev
    ```
 
-6. Open your browser and go to `http://localhost:3000` to view the app.
+6. Build for production:
+
+   ```bash
+   npm run build
+   ```
+
+7. Open your browser and go to `http://localhost:5173` to view the app.
 
 ---
 
@@ -110,9 +131,18 @@ Try the live demo here: [Mood-Based Study/Work Environment Generator](https://mo
 
 ## 📌 Notes
 
-* Ensure you have a valid Spotify Developer account and replace the placeholder credentials in the `.env` file.
-* For a smoother experience, use the app in a modern browser like Chrome or Firefox.
+* The database schema includes automatic triggers for analytics aggregation.
+* All user data is protected with Row Level Security (RLS) policies.
+* The app supports both authenticated and anonymous usage for session tracking.
+* For the best experience, use a modern browser with JavaScript enabled.
 * Contributions are welcome! Feel free to fork the repository and submit pull requests.
+
+## 🎯 Keyboard Shortcuts
+
+* **1-4**: Quickly select moods (Calm, Stressed, Excited, Tired)
+* **Space**: Play/Pause music (when in mood environment)
+* **P**: Start/Pause Pomodoro timer
+* **Right-click theme toggle**: Access system theme option
 
 ---
 

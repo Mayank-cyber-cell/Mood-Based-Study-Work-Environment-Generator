@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,18 @@ import { Mood } from '@/types/mood';
 
 interface MusicPlayerProps {
   mood: Mood;
+  onMusicPlayed?: (played: boolean) => void;
 }
 
-export const MusicPlayer = ({ mood }: MusicPlayerProps) => {
+export const MusicPlayer = ({ mood, onMusicPlayed }: MusicPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(70);
+
+  useEffect(() => {
+    if (onMusicPlayed) {
+      onMusicPlayed(isPlaying);
+    }
+  }, [isPlaying, onMusicPlayed]);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);

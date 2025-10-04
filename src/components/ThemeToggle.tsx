@@ -1,23 +1,31 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Sparkles } from 'lucide-react';
+import { Sun, Moon, Sparkles, Monitor } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useState } from 'react';
 
 export const ThemeToggle = () => {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === 'dark';
+  const { theme, resolvedTheme, toggleTheme, setThemeMode } = useTheme();
+  const [showMenu, setShowMenu] = useState(false);
+  const isDark = resolvedTheme === 'dark';
 
   return (
-    <motion.button
-      onClick={toggleTheme}
-      className="relative w-16 h-8 rounded-full p-1 transition-colors duration-500 ease-in-out overflow-hidden"
-      style={{
-        background: isDark
-          ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
-          : 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)'
-      }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
+    <div className="relative">
+      <motion.button
+        onClick={toggleTheme}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowMenu(!showMenu);
+        }}
+        className="relative w-16 h-8 rounded-full p-1 transition-colors duration-500 ease-in-out overflow-hidden"
+        style={{
+          background: isDark
+            ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+            : 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)'
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        title="Toggle theme (right-click for options)"
+      >
       <motion.div
         className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none"
         initial={false}
@@ -112,6 +120,70 @@ export const ThemeToggle = () => {
           ease: "easeInOut"
         }}
       />
-    </motion.button>
+      </motion.button>
+
+      <AnimatePresence>
+        {showMenu && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40"
+              onClick={() => setShowMenu(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              className="absolute top-full right-0 mt-2 glass-card p-2 z-50 min-w-[160px]"
+            >
+              <button
+                onClick={() => {
+                  setThemeMode('light');
+                  setShowMenu(false);
+                }}
+                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                  theme === 'light'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-white/10'
+                }`}
+              >
+                <Sun className="w-4 h-4" />
+                <span className="text-sm font-medium">Light</span>
+              </button>
+              <button
+                onClick={() => {
+                  setThemeMode('dark');
+                  setShowMenu(false);
+                }}
+                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-white/10'
+                }`}
+              >
+                <Moon className="w-4 h-4" />
+                <span className="text-sm font-medium">Dark</span>
+              </button>
+              <button
+                onClick={() => {
+                  setThemeMode('system');
+                  setShowMenu(false);
+                }}
+                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                  theme === 'system'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-white/10'
+                }`}
+              >
+                <Monitor className="w-4 h-4" />
+                <span className="text-sm font-medium">System</span>
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };

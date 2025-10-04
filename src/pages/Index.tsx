@@ -1,34 +1,61 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MessageSquare, TrendingUp } from 'lucide-react';
 import { MoodCard } from '@/components/MoodCard';
 import { MusicPlayer } from '@/components/MusicPlayer';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
 import { QuoteDisplay } from '@/components/QuoteDisplay';
 import { Header } from '@/components/Header';
+import { RatingDialog } from '@/components/RatingDialog';
+import { MoodAnalytics } from '@/components/MoodAnalytics';
+import { Button } from '@/components/ui/button';
 import { MOODS } from '@/data/mood';
 import { MoodType } from '@/types/mood';
+import { useSession } from '@/hooks/useSession';
 
 const Index = () => {
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showRatingDialog, setShowRatingDialog] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [musicPlayed, setMusicPlayed] = useState(false);
+  const [timerUsed, setTimerUsed] = useState(false);
 
+  const { sessionData, endSession, updateSessionActivity } = useSession(selectedMood);
   const selectedMoodData = selectedMood ? MOODS.find(m => m.id === selectedMood) : null;
 
   const handleMoodSelect = async (moodId: string) => {
     if (selectedMood === moodId) return;
-    
+
+    if (selectedMood && sessionData.sessionId) {
+      await endSession();
+    }
+
     setIsTransitioning(true);
-    
-    // Wait for fade out
+
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     setSelectedMood(moodId as MoodType);
-    
-    // Update body class for theme
+    setMusicPlayed(false);
+    setTimerUsed(false);
+
     document.body.className = `mood-${moodId}`;
-    
+
     setIsTransitioning(false);
   };
+
+  const handleEndSession = async () => {
+    if (sessionData.sessionId) {
+      await endSession();
+      setShowRatingDialog(true);
+    }
+    setSelectedMood(null);
+    document.body.className = 'mood-calm';
+  };
+
+  useEffect(() => {
+    updateSessionActivity(musicPlayed, timerUsed);
+  }, [musicPlayed, timerUsed, updateSessionActivity]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -99,13 +126,35 @@ const Index = () => {
               transition={{ duration: 0.3 }}
               className="space-y-8"
             >
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-2xl font-semibold text-center mb-8"
-              >
-                How are you feeling today?
-              </motion.h2>
+              <div className="flex flex-col items-center gap-8">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-2xl font-semibold text-center"
+                >
+                  How are you feeling today?
+                </motion.h2>
+
+                <Button
+                  onClick={() => setShowAnalytics(!showAnalytics)}
+                  variant="outline"
+                  className="glass-button"
+                >
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  {showAnalytics ? 'Hide' : 'View'} Analytics
+                </Button>
+              </div>
+
+              {showAnalytics && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="max-w-6xl mx-auto"
+                >
+                  <MoodAnalytics />
+                </motion.div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                 {MOODS.map((mood, index) => (
@@ -137,18 +186,26 @@ const Index = () => {
               transition={{ duration: 0.5 }}
               className="space-y-8"
             >
-              {/* Back to mood selection */}
-              <motion.button
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                onClick={() => {
-                  setSelectedMood(null);
-                  document.body.className = 'mood-calm';
-                }}
-                className="glass-button px-5 py-2.5 mb-8 hover:scale-105 transition-transform font-medium"
-              >
-                ← Change Mood
-              </motion.button>
+              <div className="flex justify-between items-center">
+                <motion.button
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={handleEndSession}
+                  className="glass-button px-5 py-2.5 hover:scale-105 transition-transform font-medium"
+                >
+                  ← Change Mood
+                </motion.button>
+
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={() => setShowRatingDialog(true)}
+                  className="glass-button px-5 py-2.5 hover:scale-105 transition-transform font-medium flex items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Rate Experience
+                </motion.button>
+              </div>
 
               {/* Selected mood header */}
               {selectedMoodData && (
@@ -171,16 +228,17 @@ const Index = () => {
 
               {/* Main content grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                {/* Music Player */}
                 <div className="lg:col-span-2">
                   {selectedMoodData && (
-                    <MusicPlayer mood={selectedMoodData} />
+                    <MusicPlayer
+                      mood={selectedMoodData}
+                      onMusicPlayed={setMusicPlayed}
+                    />
                   )}
                 </div>
 
-                {/* Pomodoro Timer */}
                 <div>
-                  <PomodoroTimer />
+                  <PomodoroTimer onTimerUsed={setTimerUsed} />
                 </div>
               </div>
 
@@ -191,6 +249,15 @@ const Index = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {selectedMood && sessionData.sessionId && (
+          <RatingDialog
+            isOpen={showRatingDialog}
+            onClose={() => setShowRatingDialog(false)}
+            mood={selectedMood}
+            sessionId={sessionData.sessionId}
+          />
+        )}
       </div>
 
       {/* Background decorative elements */}
